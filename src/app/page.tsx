@@ -1,66 +1,157 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
 import styles from "./page.module.css";
 
+type JobPosting = {
+  title: string;
+  department?: string;
+  team?: string;
+  location?: string;
+  employmentType?: string;
+  isRemote?: boolean;
+  descriptionHtml?: string;
+  compensation?: {
+    compensationTierSummary?: string;
+  };
+};
+
 export default function Home() {
+  const [url, setUrl] = useState("");
+  const [job, setJob] = useState<JobPosting | null>(null);
+  const [prediction, setPrediction] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [predicting, setPredicting] = useState(false);
+  const [error, setError] = useState("");
+
+  async function fetchJob(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setJob(null);
+    setPrediction("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/job", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to fetch job");
+      }
+
+      const { posting } = await res.json();
+      setJob(posting);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function getPrediction() {
+    if (!job) return;
+
+    setPrediction("");
+    setPredicting(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ posting: job }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Prediction failed");
+      }
+
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error("No response body");
+
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        setPrediction((prev) => prev + chunk);
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setPredicting(false);
+    }
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <h1>Salary Predictor</h1>
+        <p>Paste an Ashby job posting URL to get a salary estimate</p>
+      </header>
+
+      <form onSubmit={fetchJob} className={styles.form}>
+        <input
+          type="url"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="https://jobs.ashbyhq.com/company/job-id"
+          required
+          className={styles.input}
         />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+        <button type="submit" disabled={loading} className={styles.btn}>
+          {loading ? "Loading..." : "Fetch Job"}
+        </button>
+      </form>
+
+      {error && <div className={styles.error}>{error}</div>}
+
+      {job && (
+        <div className={styles.jobCard}>
+          <div className={styles.jobHeader}>
+            <h2>{job.title}</h2>
+            {job.compensation?.compensationTierSummary && (
+              <span className={styles.compBadge}>
+                {job.compensation.compensationTierSummary}
+              </span>
+            )}
+          </div>
+
+          <div className={styles.jobMeta}>
+            {job.location && <span>{job.location}</span>}
+            {job.department && <span>{job.department}</span>}
+            {job.employmentType && <span>{job.employmentType}</span>}
+            {job.isRemote && <span>Remote</span>}
+          </div>
+
+          {job.descriptionHtml && (
+            <div
+              className={styles.description}
+              dangerouslySetInnerHTML={{ __html: job.descriptionHtml }}
             />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          )}
+
+          <button
+            onClick={getPrediction}
+            disabled={predicting}
+            className={styles.predictBtn}
           >
-            Documentation
-          </a>
+            {predicting ? "Analyzing..." : "Predict Salary"}
+          </button>
         </div>
-      </main>
+      )}
+
+      {prediction && (
+        <div className={styles.predictionCard}>
+          <h3>Salary Analysis</h3>
+          <div className={styles.predictionText}>{prediction}</div>
+        </div>
+      )}
     </div>
   );
 }

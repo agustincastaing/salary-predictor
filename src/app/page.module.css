@@ -1,141 +1,223 @@
-.page {
-  --background: #fafafa;
-  --foreground: #fff;
-
-  --text-primary: #000;
-  --text-secondary: #666;
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
-
-  display: flex;
-  min-height: 100vh;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
-}
-
-.main {
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
+.container {
   max-width: 800px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
-.intro {
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.form {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
 }
 
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
-  font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
+.input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
 }
 
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
-  color: var(--text-secondary);
+.input:focus {
+  outline: none;
+  border-color: #0070f3;
 }
 
-.intro a {
+.btn, .predictBtn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
   font-weight: 500;
-  color: var(--text-primary);
-}
-
-.ctas {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
-}
-
-.ctas a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  width: fit-content;
+  background: #0070f3;
+  color: white;
+  transition: background 0.15s;
+}
+
+.btn:hover:not(:disabled), .predictBtn:hover:not(:disabled) {
+  background: #005bb5;
+}
+
+.btn:disabled, .predictBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  color: #c00;
+}
+
+.jobCard {
+  background: var(--background);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.jobHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.jobHeader h2 {
+  font-size: 1.35rem;
+  margin: 0;
+}
+
+.compBadge {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
   font-weight: 500;
+  white-space: nowrap;
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
-  gap: 8px;
+.jobMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.jobMeta span {
+  background: #f5f5f5;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #555;
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
+.description {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 1rem;
+  background: #fafafa;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.description h1, .description h2, .description h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.description h1:first-child, .description h2:first-child, .description h3:first-child {
+  margin-top: 0;
+}
+
+.description ul, .description ol {
+  margin-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.description p {
+  margin-bottom: 0.75rem;
+}
+
+.predictBtn {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.predictionCard {
+  background: #f8f9ff;
+  border: 1px solid #d0d7ff;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.predictionCard h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.predictionText {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .header p {
+    color: #aaa;
   }
 
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
+  .input {
+    border-color: #444;
+  }
+
+  .jobCard {
+    border-color: #333;
+  }
+
+  .jobMeta span {
+    background: #2a2a2a;
+    color: #ccc;
+  }
+
+  .description {
+    background: #1a1a1a;
+  }
+
+  .compBadge {
+    background: #1b3320;
+    color: #81c784;
+  }
+
+  .predictionCard {
+    background: #1a1a2e;
+    border-color: #2a2a4e;
+  }
+
+  .predictionCard h3 {
+    color: #eee;
+  }
+
+  .error {
+    background: #2d1a1a;
+    border-color: #4a2a2a;
+    color: #ff6b6b;
   }
 }
 
 @media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
+  .form {
+    flex-direction: column;
   }
 
-  .intro {
-    gap: 16px;
-  }
-
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
-
-  .page {
-    --background: #000;
-    --foreground: #000;
-
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
+  .jobHeader {
+    flex-direction: column;
   }
 }
