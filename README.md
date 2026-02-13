@@ -1,5 +1,7 @@
 # Salary Predictor
 
+Live URL: https://salary-predictor-seven.vercel.app/
+
 Paste an Ashby job posting URL and get a salary estimate powered by Claude.
 
 ## Setup
@@ -26,6 +28,15 @@ npm run dev
 
 The app fetches the job details from Ashby's API and sends them to Claude for analysis.
 
+## Tests
+
+Run tests with:
+```bash
+npm test
+```
+
+Basic tests for URL parsing logic are in `src/tests/`.
+
 ## Chrome Extension (Bonus)
 
 There's also a Chrome extension in the `extension/` folder.
@@ -38,10 +49,24 @@ To install:
 
 Then navigate to any Ashby job posting and click the extension icon to get a salary prediction.
 
-Note: I had no prior experience with Chrome extensions, so I used AI assistance to build this part. If AI usage was not allowed for the bonus, feel free to discard the bonus points.
+## Caching
+
+The app uses a simple in-memory cache to avoid repeated API calls for the same job posting. If you click "Predict Salary" twice on the same job, the second request uses the cached result.
+
+This is a basic approach for the demo. In a real scenario I'd probably:
+- Use Redis or a database to persist predictions server-side
+- Add cache expiration (predictions might get stale as market changes)
+- Cache by job ID instead of URL
+- Add rate limiting per user/IP to prevent abuse
+
+## AI Assistance
+
+I used AI (Claude) to help build some parts of this project:
+- **Chrome extension**: I had no prior experience with browser extensions
+- **Tests**: Basic test setup and structure
+
+The core app logic (API routes, frontend, streaming) was built by me. If AI usage disqualifies the bonus features, feel free to discard those points.
 
 ## Note
-
-Live URL: https://salary-predictor-seven.vercel.app/
 
 The API key included for demo purposes has limited credits and may hit rate limits. If you get a 400 error, the credits probably ran out.

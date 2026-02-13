@@ -16,6 +16,8 @@ type JobPosting = {
   };
 };
 
+const cache: Record<string, string> = {};
+
 export default function Home() {
   const [url, setUrl] = useState("");
   const [job, setJob] = useState<JobPosting | null>(null);
@@ -23,6 +25,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [predicting, setPredicting] = useState(false);
   const [error, setError] = useState("");
+  const [fromCache, setFromCache] = useState(false);
 
   async function fetchJob(e: React.FormEvent) {
     e.preventDefault();
@@ -55,9 +58,17 @@ export default function Home() {
   async function getPrediction() {
     if (!job) return;
 
+    const cacheKey = url;
+    if (cache[cacheKey]) {
+      setPrediction(cache[cacheKey]);
+      setFromCache(true);
+      return;
+    }
+
     setPrediction("");
     setPredicting(true);
     setError("");
+    setFromCache(false);
 
     try {
       const res = await fetch("/api/predict", {
@@ -74,13 +85,17 @@ export default function Home() {
       if (!reader) throw new Error("No response body");
 
       const decoder = new TextDecoder();
+      let fullText = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
-        setPrediction((prev) => prev + chunk);
+        fullText += chunk;
+        setPrediction(fullText);
       }
+
+      cache[cacheKey] = fullText;
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -110,6 +125,23 @@ export default function Home() {
       </form>
 
       {error && <div className={styles.error}>{error}</div>}
+
+      {loading && (
+        <div className={styles.skeleton}>
+          <div className={styles.skeletonTitle} />
+          <div className={styles.skeletonMeta}>
+            <div className={styles.skeletonTag} />
+            <div className={styles.skeletonTag} />
+            <div className={styles.skeletonTag} />
+          </div>
+          <div className={styles.skeletonBody}>
+            <div className={styles.skeletonLine} />
+            <div className={styles.skeletonLine} />
+            <div className={styles.skeletonLine} />
+            <div className={styles.skeletonLine} style={{ width: "60%" }} />
+          </div>
+        </div>
+      )}
 
       {job && (
         <div className={styles.columns}>
@@ -147,7 +179,10 @@ export default function Home() {
           </div>
 
           <div className={styles.predictionCard}>
-            <h3>Salary Analysis</h3>
+            <h3>
+              Salary Analysis
+              {fromCache && <span className={styles.cacheTag}>(cached)</span>}
+            </h3>
             <div className={styles.predictionText}>
               {prediction || "Click 'Predict Salary' to get an estimate"}
             </div>
