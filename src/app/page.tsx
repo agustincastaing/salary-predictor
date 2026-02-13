@@ -28,7 +28,6 @@ export default function Home() {
     e.preventDefault();
     setError("");
     setJob(null);
-    setPrediction("");
     setLoading(true);
 
     try {
