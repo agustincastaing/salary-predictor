@@ -1,7 +1,14 @@
 .container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
 }
 
 .header {
@@ -74,7 +81,6 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 1.5rem;
-  margin-bottom: 1.5rem;
 }
 
 .jobHeader {
@@ -155,6 +161,8 @@
   border: 1px solid #d0d7ff;
   border-radius: 8px;
   padding: 1.5rem;
+  position: sticky;
+  top: 1rem;
 }
 
 .predictionCard h3 {
@@ -209,6 +217,16 @@
     background: #2d1a1a;
     border-color: #4a2a2a;
     color: #ff6b6b;
+  }
+}
+
+@media (max-width: 800px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .predictionCard {
+    position: static;
   }
 }
 

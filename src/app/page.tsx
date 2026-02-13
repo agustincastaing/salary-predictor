@@ -112,44 +112,46 @@ export default function Home() {
       {error && <div className={styles.error}>{error}</div>}
 
       {job && (
-        <div className={styles.jobCard}>
-          <div className={styles.jobHeader}>
-            <h2>{job.title}</h2>
-            {job.compensation?.compensationTierSummary && (
-              <span className={styles.compBadge}>
-                {job.compensation.compensationTierSummary}
-              </span>
+        <div className={styles.columns}>
+          <div className={styles.jobCard}>
+            <div className={styles.jobHeader}>
+              <h2>{job.title}</h2>
+              {job.compensation?.compensationTierSummary && (
+                <span className={styles.compBadge}>
+                  {job.compensation.compensationTierSummary}
+                </span>
+              )}
+            </div>
+
+            <div className={styles.jobMeta}>
+              {job.location && <span>{job.location}</span>}
+              {job.department && <span>{job.department}</span>}
+              {job.employmentType && <span>{job.employmentType}</span>}
+              {job.isRemote && <span>Remote</span>}
+            </div>
+
+            {job.descriptionHtml && (
+              <div
+                className={styles.description}
+                dangerouslySetInnerHTML={{ __html: job.descriptionHtml }}
+              />
             )}
+
+            <button
+              onClick={getPrediction}
+              disabled={predicting}
+              className={styles.predictBtn}
+            >
+              {predicting ? "Analyzing..." : "Predict Salary"}
+            </button>
           </div>
 
-          <div className={styles.jobMeta}>
-            {job.location && <span>{job.location}</span>}
-            {job.department && <span>{job.department}</span>}
-            {job.employmentType && <span>{job.employmentType}</span>}
-            {job.isRemote && <span>Remote</span>}
+          <div className={styles.predictionCard}>
+            <h3>Salary Analysis</h3>
+            <div className={styles.predictionText}>
+              {prediction || "Click 'Predict Salary' to get an estimate"}
+            </div>
           </div>
-
-          {job.descriptionHtml && (
-            <div
-              className={styles.description}
-              dangerouslySetInnerHTML={{ __html: job.descriptionHtml }}
-            />
-          )}
-
-          <button
-            onClick={getPrediction}
-            disabled={predicting}
-            className={styles.predictBtn}
-          >
-            {predicting ? "Analyzing..." : "Predict Salary"}
-          </button>
-        </div>
-      )}
-
-      {prediction && (
-        <div className={styles.predictionCard}>
-          <h3>Salary Analysis</h3>
-          <div className={styles.predictionText}>{prediction}</div>
         </div>
       )}
     </div>
