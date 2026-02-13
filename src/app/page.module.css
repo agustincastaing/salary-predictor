@@ -28,7 +28,31 @@
 .form {
   display: flex;
   gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
   margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.historyItem {
+  background: #f0f0f0;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #333;
+}
+
+.historyItem:hover {
+  background: #e0e0e0;
 }
 
 .input {
@@ -282,6 +306,15 @@
   .skeletonTag,
   .skeletonLine {
     background: #333;
+  }
+
+  .historyItem {
+    background: #2a2a2a;
+    color: #ccc;
+  }
+
+  .historyItem:hover {
+    background: #3a3a3a;
   }
 }
 

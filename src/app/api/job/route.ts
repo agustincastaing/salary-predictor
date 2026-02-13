@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
 
     const [, boardName, postingId] = match;
 
+    //Public API for Ashby
     const response = await fetch(
       `https://api.ashbyhq.com/posting-api/job-board/${boardName}?includeCompensation=true`
     );

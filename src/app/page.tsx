@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./page.module.css";
+
+type HistoryItem = { url: string; title: string };
 
 type JobPosting = {
   title: string;
@@ -26,6 +28,12 @@ export default function Home() {
   const [predicting, setPredicting] = useState(false);
   const [error, setError] = useState("");
   const [fromCache, setFromCache] = useState(false);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("jobHistory");
+    if (saved) setHistory(JSON.parse(saved));
+  }, []);
 
   async function fetchJob(e: React.FormEvent) {
     e.preventDefault();
@@ -48,6 +56,10 @@ export default function Home() {
 
       const { posting } = await res.json();
       setJob(posting);
+
+      const newHistory = [{ url, title: posting.title }, ...history.filter(h => h.url !== url)].slice(0, 5);
+      setHistory(newHistory);
+      localStorage.setItem("jobHistory", JSON.stringify(newHistory));
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -123,6 +135,17 @@ export default function Home() {
           {loading ? "Loading..." : "Fetch Job"}
         </button>
       </form>
+
+      {history.length > 0 && (
+        <div className={styles.history}>
+          <span>Recent:</span>
+          {history.map((h) => (
+            <button key={h.url} onClick={() => setUrl(h.url)} className={styles.historyItem}>
+              {h.title}
+            </button>
+          ))}
+        </div>
+      )}
 
       {error && <div className={styles.error}>{error}</div>}
 
