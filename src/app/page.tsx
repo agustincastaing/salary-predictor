@@ -27,6 +27,7 @@ export default function Home() {
   async function fetchJob(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setPrediction("");
     setJob(null);
     setLoading(true);
 
